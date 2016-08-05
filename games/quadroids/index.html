@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Space Debris</title>
+</head>
+<body onload="init();" bgcolor="black" text="white">
+    <script src="shapes.js"></script>
+    <script src="objects.js"></script>
+    <script src="key.js"></script>
+    <script src="spacedebris.js"></script>
+    <center>
+        <div id="canvascontainer">
+            <canvas id="canvas" width="800" height="600"></canvas>
+            <audio id="rockExplode">
+                <source src="resources/rock_explode.wav" type="audio/wav">
+            </audio>
+            <audio id="shipExplode">
+                <source src="resources/ship_explode.wav" type="audio/wav">
+            </audio>
+            <audio id="zap">
+                <source src="resources/zap.wav" type="audio/wav">
+            </audio>
+        </div>
+    </center>
+    <p id="level"></p>
+    <p id="score"></p>
+    <p id="shields"></p>
+</body>
+</html>
