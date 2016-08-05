@@ -1,0 +1,12 @@
+// move a piece
+// determine if move is valid
+//		free vs. occupied
+//      adjacent to current position
+//      direction of travel
+// determine if opponent is jumped by move
+// 
+
+// set up board
+// 8x8 grid
+// 12 pieces for each player, black & white
+
