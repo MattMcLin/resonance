@@ -145,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
+    // start & end coordinates for tracking mouse drags
     static int startX = 0;
     static int startY = 0;
     static int endX = 0;
@@ -181,7 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 endY = yPos / squareSize;
                 Cell start(startX, startY);
                 Cell end(endX, endY);
-                g_board.Move(start, end);
+                g_board.move(start, end);
                 InvalidateRect(hWnd, NULL, FALSE);
                 movingPiece = false;
             }
@@ -258,9 +259,10 @@ void renderBoard(HDC hdc, Board * pBoard)
                 }
                 Rectangle(hdc, x, y, x + squareSize, y + squareSize);
 
-                if (!g_board.isEmpty(i, j))
+                Cell pos(i, j);
+                if (!g_board.isEmpty(pos))
                 {
-                    if (g_board.isWhite(i, j))
+                    if (g_board.pieceAt(pos).isWhite())
                     {
                         SelectObject(hdc, GetStockObject(GRAY_BRUSH));
                     }
@@ -270,7 +272,7 @@ void renderBoard(HDC hdc, Board * pBoard)
                     }
                     Ellipse(hdc, x, y, x + squareSize, y + squareSize);
 
-                    if (g_board.isKing(i, j))
+                    if (g_board.pieceAt(pos).isKing())
                     {
                         SelectObject(hdc, GetStockObject(BLACK_BRUSH));
                         drawCenteredText(hdc, x + squareSize / 2, y + squareSize / 2, "K");

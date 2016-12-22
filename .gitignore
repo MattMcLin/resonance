@@ -5,3 +5,4 @@ ipch/
 *.ncb
 *.suo
 *.sdf
+*.VC.*db
