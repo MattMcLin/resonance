@@ -1,38 +1,13 @@
-// Board.h
+#ifndef _BOARD_H_
+#define _BOARD_H_
+
+#include "checker.h"
 
 const int NUM_SQUARES = 8;  // board width & height in squares
 const int NUM_PIECES = 12;  // initial checkers per color
 
 const int WHITE_PLAYER = 0;
 const int BLACK_PLAYER = 1;
-
-typedef enum
-{
-	sq_empty = 0,
-	sq_white,
-	sq_white_king,
-	sq_black,
-	sq_black_king,
-} CheckerType;
-
-class Checker
-{
-public:
-    Checker();
-    Checker(CheckerType cType);
-    Checker(const Checker& other);
-    Checker& operator =(const Checker& other);
-
-    CheckerType type();
-
-    bool isEmpty();
-    bool isWhite();
-    bool isBlack();
-    bool isKing();
-
-private:
-    CheckerType m_type;
-};
 
 class Cell
 {
@@ -82,3 +57,5 @@ private:
     int m_numKings[2] = { 0 };
     int m_numDangers[2] = { 0 };
 };
+
+#endif

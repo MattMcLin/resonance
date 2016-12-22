@@ -145,7 +145,7 @@ bool Board::moveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
 
 bool Board::matchesColor(Checker piece, Checker color) const
 {
-    if (   (piece.isWhite() && color.isWhite())
+    if ((piece.isWhite() && color.isWhite())
         || (piece.isBlack() && color.isBlack()))
     {
         return true;
@@ -155,7 +155,7 @@ bool Board::matchesColor(Checker piece, Checker color) const
 
 bool Board::validDirection(Checker piece, int yDir) const
 {
-    if (piece.isKing() || (piece.isWhite() && (yDir > 0)) || (piece.isBlack() && (yDir < 0))) 
+    if (piece.isKing() || (piece.isWhite() && (yDir > 0)) || (piece.isBlack() && (yDir < 0)))
     {
         return true;
     }
@@ -175,16 +175,19 @@ bool Board::inDanger(const Cell& pos)
     Checker e = pieceAt(pos, 1, 1);
 
     // Consider 4 jumps: A->E, B->D, D->B, E->A
-    if        (!a.isEmpty() && e.isEmpty() && !matchesColor(a, c) && validDirection(a, 1)) {
-        canBeJumped = true;
-    } else if (!b.isEmpty() && d.isEmpty() && !matchesColor(b, c) && validDirection(b, 1)) {
-        canBeJumped = true;
-    } else if (!d.isEmpty() && b.isEmpty() && !matchesColor(d, c) && validDirection(d, -1)) {
-        canBeJumped = true;
-    } else if (!e.isEmpty() && a.isEmpty() && !matchesColor(e, c) && validDirection(e, -1)) {
+    if (!a.isEmpty() && e.isEmpty() && !matchesColor(a, c) && validDirection(a, 1)) {
         canBeJumped = true;
     }
- 
+    else if (!b.isEmpty() && d.isEmpty() && !matchesColor(b, c) && validDirection(b, 1)) {
+        canBeJumped = true;
+    }
+    else if (!d.isEmpty() && b.isEmpty() && !matchesColor(d, c) && validDirection(d, -1)) {
+        canBeJumped = true;
+    }
+    else if (!e.isEmpty() && a.isEmpty() && !matchesColor(e, c) && validDirection(e, -1)) {
+        canBeJumped = true;
+    }
+
     return canBeJumped;
 }
 
@@ -241,7 +244,7 @@ bool Board::isWinner(int player)
 
 int Board::score(int player)
 {
-    int score = m_numPieces[player] - m_numPieces[!player] 
+    int score = m_numPieces[player] - m_numPieces[!player]
                 + (3 * m_numKings[player]) - (2 * m_numKings[!player])
                 + (6 * m_numDangers[!player]) - (6 * m_numDangers[player]);
     if (m_numPieces[!player] == 0)
@@ -263,66 +266,4 @@ void Board::checkVictoryConditions()
     {
         m_gameOver = true;
     }
-}
-
-Checker::Checker()
-    : m_type(sq_empty)
-{
-}
-
-Checker::Checker(CheckerType cType)
-    : m_type(cType)
-{
-}
-
-Checker::Checker(const Checker& other)
-    : m_type(other.m_type)
-{
-}
-
-Checker& Checker::operator=(const Checker& other)
-{
-    if (this != &other)
-    {
-        m_type = other.m_type;
-    }
-
-    return *this;
-}
-
-CheckerType Checker::type()
-{
-    return m_type;
-}
-
-bool Checker::isEmpty()
-{
-    return (m_type == sq_empty);
-}
-
-bool Checker::isWhite()
-{
-    if ((m_type == sq_white) || (m_type == sq_white_king))
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Checker::isBlack()
-{
-    if ((m_type == sq_black) || (m_type == sq_black_king))
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Checker::isKing()
-{
-    if ((m_type == sq_white_king) || (m_type == sq_black_king))
-    {
-        return true;
-    }
-    return false;
 }
