@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>TypeScript HTML App</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <script src="app.js"></script>
+    <script src="FileSaver/FileSaver.js"></script>
+</head>
+<body>
+    <div class="leftSide">
+        <h1>Mine Mapper</h1>
+    </div>
+    <div class="mapselector">
+        <p>
+            <b>Create new map:</b>
+            <input type="text" id="mapName" />
+            <button onclick="newMap(); return false;">Create</button>
+        </p>
+        <p>
+            <b>Select existing map:</b>
+            <select id="mapPicker" onchange="loadMap(true); return false;"></select>
+            <button onclick="exportMap(); return false;">Export</button>
+        </p>
+        <p>
+            <b>Import map from JSON file:</b>
+            <input type="file" id="fileInput" />
+        </p>
+    </div>
+    <b>Enter new map locations here:</b>
+    <form onsubmit="addMapEntry(); return false;" id="mapForm">
+        <table style="width:100%">
+            <tr>
+                <th>X</th>
+                <th>Z</th>
+                <th>Name of location</th>
+            </tr>
+            <tr>
+                <td><input type="number" required id="newX" /></td>
+                <td><input type="number" required id="newY" /></td>
+                <td><input type="text" required id="newName" class="full-width" /></td>
+                <td><input type="submit" value="Add" /></td>
+            </tr>
+        </table>
+    </form> 
+    <section class="leftSide">
+        <canvas id="mapCanvas" width="800" height="600"></canvas>
+    </section>   
+    <aside class="rightSide">
+        <p><b id="locationName"></b></p>
+        <p id="coordinates" class="coords"></p>
+        <p>Notes for selected location:</p>
+        <textarea id="note" class="full-size" rows="20" cols="50" onchange="updateNote(); return false;"></textarea>
+    </aside>
+    <section class="newSection">
+        <button onclick="resize(); return false;">Zoom to fit</button>
+        <button onclick="zoomIn(); return false;">Zoom in</button>
+        <button onclick="zoomOut(); return false;">Zoom out</button>
+        <text id="mousexy" class="coords"></text>
+    </section>
+    <section class="newSection">
+        <h2>Map locations</h2>
+        <table style="width:100%" id="locationTable">
+            <colgroup>
+                <col style="width:15%"/>
+                <col style="width:15%"/>
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <tr>
+                <th>X</th>
+                <th>Z</th>
+                <th>Name of location</th>
+                <th></th>
+            </tr>
+        </table>
+    </section>
+    <button onclick="deleteMap(); return false;">Delete map</button>
+</body>
+</html>

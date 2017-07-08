@@ -1,0 +1,44 @@
+﻿/* Press Ctrl-F5 in browser to force CSS to reload. */
+
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+}
+
+.coords {
+    font-family: 'Courier New';
+    font-size: small;
+}
+
+span {
+    font-style: italic;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+div.mapselector {
+    padding: 5px;
+    margin-left: 250px;
+    margin-bottom: 20px;
+}
+
+.full-width {
+    width: 98%;
+}
+
+.full-size {
+    width: 98%;
+}
+
+.leftSide {
+    float: left;
+}
+
+.rightSide {
+    margin-left: 800px;
+}
+
+.newSection {
+    clear: both;
+}
