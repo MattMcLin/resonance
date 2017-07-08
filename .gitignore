@@ -2,6 +2,8 @@ build*/
 Debug/
 Release/
 ipch/
+.vs/
 *.ncb
 *.suo
 *.sdf
+*.map
