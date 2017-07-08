@@ -35,22 +35,22 @@ Board::Board()
     }
 }
 
-bool Board::Move(Cell OldPos, Cell NewPos)
+bool Board::move(Cell OldPos, Cell NewPos)
 {
     bool bRet = false;
 
     Cell pieceToRemove;
-    if (MoveIsValid(OldPos, NewPos, &pieceToRemove))
+    if (moveIsValid(OldPos, NewPos, &pieceToRemove))
     {
-        Checker c = pieceAt(OldPos.x, OldPos.y);
+        Checker c = pieceAt(OldPos);
         // Now check if we should make the piece a King.
-        if (isWhite(c) && (NewPos.y == (NUM_SQUARES - 1)))
+        if (c.isWhite() && (NewPos.y == (NUM_SQUARES - 1)))
         {
-            c = sq_white_king;
+            c = Checker(sq_white_king);
         }
-        else if (isBlack(c) && (NewPos.y == 0))
+        else if (c.isBlack() && (NewPos.y == 0))
         {
-            c = sq_black_king;
+            c = Checker(sq_black_king);
         }
 
         m_BoardGrid[OldPos.y][OldPos.x] = sq_empty;
@@ -70,30 +70,39 @@ bool Board::Move(Cell OldPos, Cell NewPos)
 	return bRet;
 }
 
-bool Board::InBounds(Cell Pos)
+bool Board::inBounds(const Cell& pos) const
 {
-	if ((Pos.x >= 0) && (Pos.x < NUM_SQUARES) && (Pos.y >= 0) && (Pos.y < NUM_SQUARES))
+	if ((pos.x >= 0) && (pos.x < NUM_SQUARES) && (pos.y >= 0) && (pos.y < NUM_SQUARES))
 		return true;
 	else
 		return false;
 }
 
-Checker Board::pieceAt(int x, int y)
+Checker Board::pieceAt(const Cell& pos) const
 {
-    Checker c = sq_empty;
-    Cell pos(x, y);
-
-    if (InBounds(pos)) {
-        c = m_BoardGrid[y][x];
+    Checker c;
+    if (inBounds(pos)) {
+        c = m_BoardGrid[pos.y][pos.x];
     }
     return c;
 }
 
-bool Board::MoveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
+Checker Board::pieceAt(const Cell& pos, int dx, int dy) const
+{
+    Cell newPos(pos.x + dx, pos.y + dy);
+    return pieceAt(newPos);
+}
+
+bool Board::isEmpty(const Cell& pos) const
+{
+    return pieceAt(pos).isEmpty();
+}
+
+bool Board::moveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
 {
     bool isValid = false;
 
-    Checker piece = pieceAt(OldPos.x, OldPos.y);
+    Checker piece = pieceAt(OldPos);
 
     const int dx = NewPos.x - OldPos.x;
     const int dy = NewPos.y - OldPos.y;
@@ -102,8 +111,8 @@ bool Board::MoveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
     if ((adx == ady)    // move must be diagonal 
         && (adx > 0)    // must be one or two squares away
         && (adx < 3)
-        && (piece != sq_empty)                           // must move a piece to an empty space
-        && (isEmpty(NewPos.x, NewPos.y))
+        && (!piece.isEmpty())
+        && (isEmpty(NewPos))    // must move a piece to an empty space
         )
     {
         if (validDirection(piece, dy))
@@ -112,8 +121,8 @@ bool Board::MoveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
             if (adx == 2)   // in this case, we also know ady == 2
             {
                 Cell middleCell(OldPos.x + (dx / 2), OldPos.y + (dy / 2));
-                Checker middlePiece = pieceAt(middleCell.x, middleCell.y);
-                if ((middlePiece != sq_empty) && !matchesColor(piece, middlePiece))
+                Checker middlePiece = pieceAt(middleCell);
+                if (!middlePiece.isEmpty() && !matchesColor(piece, middlePiece))
                 {
                     if (pRemovedPos)
                     {
@@ -134,110 +143,51 @@ bool Board::MoveIsValid(Cell OldPos, Cell NewPos, Cell* pRemovedPos)
     return isValid;
 }
 
-bool Board::isEmpty(int x, int y)
+bool Board::matchesColor(Checker piece, Checker color) const
 {
-    return (pieceAt(x,y) == sq_empty);
-}
-
-bool Board::isEmpty(Cell Pos)
-{
-    return isEmpty(Pos.x, Pos.y);
-}
-
-bool Board::isEmpty(Checker c)
-{
-    return (c == sq_empty);
-}
-
-bool Board::isWhite(Checker c)
-{
-    if ((c == sq_white) || (c == sq_white_king))
+    if ((piece.isWhite() && color.isWhite())
+        || (piece.isBlack() && color.isBlack()))
     {
         return true;
     }
     return false;
 }
 
-bool Board::isBlack(Checker c)
+bool Board::validDirection(Checker piece, int yDir) const
 {
-    if ((c == sq_black) || (c == sq_black_king))
+    if (piece.isKing() || (piece.isWhite() && (yDir > 0)) || (piece.isBlack() && (yDir < 0)))
     {
         return true;
     }
     return false;
 }
 
-bool Board::isKing(Checker c)
-{
-    if ((c == sq_white_king) || (c == sq_black_king))
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Board::isWhite(Cell Pos)
-{
-    return isWhite(Pos.x, Pos.y);
-}
-
-bool Board::isWhite(int x, int y)
-{
-    return isWhite(pieceAt(x, y));
-}
-
-bool Board::isKing(Cell Pos)
-{
-    return isKing(Pos.x, Pos.y);
-}
-
-bool Board::isKing(int x, int y)
-{
-    return isKing(pieceAt(x,y));
-}
-
-bool Board::matchesColor(Checker piece, Checker color)
-{
-    if (   (isWhite(piece) && isWhite(color))
-        || (isBlack(piece) && isBlack(color)))
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Board::validDirection(Checker piece, int yDir)
-{
-    if (isKing(piece) || (isWhite(piece) && (yDir > 0)) || (isBlack(piece) && (yDir < 0))) 
-    {
-        return true;
-    }
-    return false;
-}
-
-bool Board::inDanger(int x, int y)
+bool Board::inDanger(const Cell& pos)
 {
     bool canBeJumped = false;
     // A   B
     //   C
     // D   E
-    Checker a = pieceAt(x-1, y-1);
-    Checker b = pieceAt(x+1, y-1);
-    Checker c = pieceAt(x, y);
-    Checker d = pieceAt(x-1, y+1);
-    Checker e = pieceAt(x+1, y+1);
+    Checker a = pieceAt(pos, -1, -1);
+    Checker b = pieceAt(pos, 1, -1);
+    Checker c = pieceAt(pos);
+    Checker d = pieceAt(pos, -1, 1);
+    Checker e = pieceAt(pos, 1, 1);
 
     // Consider 4 jumps: A->E, B->D, D->B, E->A
-    if        ((a != sq_empty) && (e == sq_empty) && !matchesColor(a, c) && validDirection(a, 1)) {
-        canBeJumped = true;
-    } else if ((b != sq_empty) && (d == sq_empty) && !matchesColor(b, c) && validDirection(b, 1)) {
-        canBeJumped = true;
-    } else if ((d != sq_empty) && (b == sq_empty) && !matchesColor(d, c) && validDirection(d, -1)) {
-        canBeJumped = true;
-    } else if ((e != sq_empty) && (a == sq_empty) && !matchesColor(e, c) && validDirection(e, -1)) {
+    if (!a.isEmpty() && e.isEmpty() && !matchesColor(a, c) && validDirection(a, 1)) {
         canBeJumped = true;
     }
- 
+    else if (!b.isEmpty() && d.isEmpty() && !matchesColor(b, c) && validDirection(b, 1)) {
+        canBeJumped = true;
+    }
+    else if (!d.isEmpty() && b.isEmpty() && !matchesColor(d, c) && validDirection(d, -1)) {
+        canBeJumped = true;
+    }
+    else if (!e.isEmpty() && a.isEmpty() && !matchesColor(e, c) && validDirection(e, -1)) {
+        canBeJumped = true;
+    }
+
     return canBeJumped;
 }
 
@@ -258,14 +208,15 @@ void Board::countPieces()
     {
         for (int i = 0; i < NUM_SQUARES; i++)
         {
-            Checker c = pieceAt(i, j);
+            Cell pos(i, j);
+            Checker c = pieceAt(pos);
 
             int p = -1;
-            if (isWhite(c))
+            if (c.isWhite())
             {
                 p = 0;
             }
-            else if (isBlack(c))
+            else if (c.isBlack())
             {
                 p = 1;
             }
@@ -273,11 +224,11 @@ void Board::countPieces()
             if (p >= 0)
             {
                 m_numPieces[p]++;
-                if (isKing(c))
+                if (c.isKing())
                 {
                     m_numKings[p]++;
                 }
-                if (inDanger(i, j))
+                if (inDanger(pos))
                 {
                     m_numDangers[p]++;
                 }
@@ -293,7 +244,7 @@ bool Board::isWinner(int player)
 
 int Board::score(int player)
 {
-    int score = m_numPieces[player] - m_numPieces[!player] 
+    int score = m_numPieces[player] - m_numPieces[!player]
                 + (3 * m_numKings[player]) - (2 * m_numKings[!player])
                 + (6 * m_numDangers[!player]) - (6 * m_numDangers[player]);
     if (m_numPieces[!player] == 0)

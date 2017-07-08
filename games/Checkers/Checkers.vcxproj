@@ -85,11 +85,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="checker.cpp" />
     <ClCompile Include="Checkers.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
+    <ClInclude Include="checker.h" />
     <ClInclude Include="Checkers.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
